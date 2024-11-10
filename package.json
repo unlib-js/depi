@@ -27,11 +27,14 @@
       "require": "./dist/helpers/inversify/getDeps.cjs"
     }
   },
-  "files": ["./dist"],
+  "files": [
+    "./dist"
+  ],
   "scripts": {
     "build": "tsup",
     "test": "vitest",
-    "prepublish": "tsup"
+    "prepublish": "tsup",
+    "example": "./src/examples/run.sh"
   },
   "keywords": [],
   "author": "",
@@ -42,6 +45,7 @@
     "inversify": "^6.1.1",
     "reflect-metadata": "^0.2.2",
     "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
     "typescript": "^5.6.3",
     "vite-tsconfig-paths": "^5.1.0",
     "vitest": "^2.1.4"
