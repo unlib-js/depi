@@ -6,10 +6,9 @@ describe('getDeps', () => {
   it('should return empty dependencies for a class without dependencies', () => {
     @injectable()
     class Whatever {}
-    expect(getDeps(Whatever)).toEqual({
-      params: [],
-      props: [],
-    })
+    const { params, props } = getDeps(Whatever)
+    expect(params(Whatever)).toEqual([])
+    expect(props).toEqual([])
   })
 
   it(
@@ -30,10 +29,9 @@ describe('getDeps', () => {
           void yep
         }
       }
-      expect(getDeps(Whatever)).toEqual({
-        params: [0, 1, 3],
-        props: [],
-      })
+      const { params, props } = getDeps(Whatever)
+      expect(params(Whatever)).toEqual([0, 1, 3])
+      expect(props).toEqual([])
     },
   )
 
@@ -47,10 +45,9 @@ describe('getDeps', () => {
         void this.baz
       }
     }
-    expect(getDeps(Whatever)).toEqual({
-      params: [],
-      props: ['foo', 'bar', 'baz'],
-    })
+    const { params, props } = getDeps(Whatever)
+    expect(params(Whatever)).toEqual([])
+    expect(props).toEqual(['foo', 'bar', 'baz'])
   })
 
   it('should return both parameter and property dependencies', () => {
@@ -72,9 +69,8 @@ describe('getDeps', () => {
         void param3
       }
     }
-    expect(getDeps(Whatever)).toEqual({
-      params: [0, 2],
-      props: ['prop0', 'prop1', 'prop2'],
-    })
+    const { params, props } = getDeps(Whatever)
+    expect(params(Whatever)).toEqual([0, 2])
+    expect(props).toEqual(['prop0', 'prop1', 'prop2'])
   })
 })

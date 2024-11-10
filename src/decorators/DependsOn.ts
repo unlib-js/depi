@@ -4,7 +4,10 @@ import type { AnyConstructor, Dependant } from '@/types'
 
 export type DependsOnOptions<T extends AnyConstructor> =
   | (keyof InstanceType<T>)[]
-  | { params?: number[], props?: (keyof InstanceType<T>)[] }
+  | {
+    params?: number[] | ((clazz: T) => number[])
+    props?: (keyof InstanceType<T>)[]
+  }
 
 /**
  * A decorator that tracks the dependencies of a class.
@@ -31,13 +34,17 @@ export default function DependsOn<T extends AnyConstructor>(
       appendToArray(MetaKey.DependsOnProps, opts, clazz)
       return
     }
-    const { params } = opts
+    const { params, props = [] } = opts
     const newClazz = class extends clazz implements Dependant {
-      public [symbols.ctorDeps]!: any[]
+      public [symbols.ctorDeps]?: any[]
       public constructor(...args: any[]) {
         super(...args)
-        this[symbols.ctorDeps] ??= []
-        this[symbols.ctorDeps].push(...params?.map(index => args[index]) ?? [])
+        const _params = typeof params === 'function'
+          ? params(newClazz)
+          : params
+        if (!_params?.length) return
+        const deps = this[symbols.ctorDeps] ??= []
+        deps.push(..._params.map(index => args[index]))
       }
     }
     Reflect.defineProperty(newClazz, 'name', {
@@ -46,7 +53,7 @@ export default function DependsOn<T extends AnyConstructor>(
       enumerable: false,
       configurable: true,
     })
-    appendToArray(MetaKey.DependsOnProps, opts.props ?? [], newClazz)
+    appendToArray(MetaKey.DependsOnProps, props, newClazz)
     /*
     SWC fucked up, adding `as T` fixes the error
 
