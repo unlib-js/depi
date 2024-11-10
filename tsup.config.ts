@@ -5,6 +5,7 @@ export default defineConfig({
     'src/index.ts',
     'src/graph/DiGraph.ts',
     'src/decorators/DependsOn.ts',
+    'src/decorators/Dependency.ts',
     'src/helpers/inversify/getDeps.ts',
   ],
   format: ['esm', 'cjs'],

@@ -21,6 +21,11 @@
       "import": "./dist/decorators/DependsOn.js",
       "require": "./dist/decorators/DependsOn.cjs"
     },
+    "./decorators/Dependency": {
+      "types": "./dist/decorators/Dependency.d.ts",
+      "import": "./dist/decorators/Dependency.js",
+      "require": "./dist/decorators/Dependency.cjs"
+    },
     "./helpers/inversify/getDeps": {
       "types": "./dist/helpers/inversify/getDeps.d.ts",
       "import": "./dist/helpers/inversify/getDeps.js",
