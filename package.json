@@ -1,0 +1,46 @@
+{
+  "name": "@unlib-js/depi",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./graph/DiGraph": {
+      "types": "./dist/graph/DiGraph.d.ts",
+      "import": "./dist/graph/DiGraph.js",
+      "require": "./dist/graph/DiGraph.cjs"
+    },
+    "./decorators/DependsOn": {
+      "types": "./dist/decorators/DependsOn.d.ts",
+      "import": "./dist/decorators/DependsOn.js",
+      "require": "./dist/decorators/DependsOn.cjs"
+    },
+    "./helpers/inversify/getDeps": {
+      "types": "./dist/helpers/inversify/getDeps.d.ts",
+      "import": "./dist/helpers/inversify/getDeps.js",
+      "require": "./dist/helpers/inversify/getDeps.cjs"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest",
+    "prepublish": "tsup"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@swc/core": "^1.9.1",
+    "@types/node": "^22.9.0",
+    "inversify": "^6.1.1",
+    "reflect-metadata": "^0.2.2",
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.3",
+    "vite-tsconfig-paths": "^5.1.0",
+    "vitest": "^2.1.4"
+  }
+}
