@@ -10,7 +10,8 @@ describe('DependsOn', () => {
       public foo: unknown
       public bar: unknown
     }
-    expect(Reflect.getMetadata(MetaKey.DependsOn, A)).toEqual(['foo', 'bar'])
+    expect(Reflect.getMetadata(MetaKey.DependsOnProps, A))
+      .toEqual(['foo', 'bar'])
   })
 
   it('should add metadata to inherited class correctly', () => {
@@ -22,13 +23,15 @@ describe('DependsOn', () => {
 
     class B extends A {}
 
-    expect(Reflect.getMetadata(MetaKey.DependsOn, B)).toEqual(['foo', 'bar'])
+    expect(Reflect.getMetadata(MetaKey.DependsOnProps, B))
+      .toEqual(['foo', 'bar'])
 
 
     @DependsOn([])
     class C extends B {}
 
-    expect(Reflect.getMetadata(MetaKey.DependsOn, C)).toEqual(['foo', 'bar'])
+    expect(Reflect.getMetadata(MetaKey.DependsOnProps, C))
+      .toEqual(['foo', 'bar'])
 
 
     @DependsOn(['baz'])
@@ -36,7 +39,7 @@ describe('DependsOn', () => {
       public baz: unknown
     }
 
-    expect(Reflect.getMetadata(MetaKey.DependsOn, D))
+    expect(Reflect.getMetadata(MetaKey.DependsOnProps, D))
       .toEqual(['foo', 'bar', 'baz'])
   })
 

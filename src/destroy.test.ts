@@ -1,7 +1,7 @@
 import { setTimeout } from 'timers/promises'
 import { describe, expect, it, vi } from 'vitest'
 import DependsOn from './decorators/DependsOn'
-import { dependantGraphOf, depsOf, destroyAsync } from './destroy'
+import { dependantGraphOf, depsOf, destroy } from './destroy'
 import DiGraph from './graph/DiGraph'
 
 describe.concurrent('destroy', () => {
@@ -320,7 +320,7 @@ describe.concurrent('destroy', () => {
   describe.concurrent('destroyAllAsync', () => {
     it('should work when no instances are passed', async () => {
       const onCircularDependencyDetected = vi.fn()
-      await expect(destroyAsync({
+      await expect(destroy({
         instances: [],
         onCircularDependencyDetected,
       })).resolves.toBeUndefined()
@@ -339,7 +339,7 @@ describe.concurrent('destroy', () => {
         [Symbol.asyncDispose] = dispose
       }
       const onCircularDependencyDetected = vi.fn()
-      await expect(destroyAsync({
+      await expect(destroy({
         instances: [
           new A(),
           new B(),
@@ -362,7 +362,7 @@ describe.concurrent('destroy', () => {
         checkDispose,
       } = case0()
       const onCircularDependencyDetected = vi.fn()
-      await expect(destroyAsync({
+      await expect(destroy({
         instances: [
           remoteConfigService,
           databaseService,
@@ -386,7 +386,7 @@ describe.concurrent('destroy', () => {
         checkDispose,
       } = case1()
       const onCircularDependencyDetected = vi.fn()
-      await expect(destroyAsync({
+      await expect(destroy({
         instances: [
           remoteConfigService,
           databaseService,
@@ -405,7 +405,7 @@ describe.concurrent('destroy', () => {
       const group0 = case0()
       const group1 = case1()
       const onCircularDependencyDetected = vi.fn()
-      await expect(destroyAsync({
+      await expect(destroy({
         instances: [
           group0.remoteConfigService,
           group0.databaseService,
@@ -445,7 +445,7 @@ describe.concurrent('destroy', () => {
       const b = new B()
       a.b = b
       b.a = a
-      await expect(destroyAsync({
+      await expect(destroy({
         instances: [a, b],
         onCircularDependencyDetected,
       })).resolves.toBeUndefined()
@@ -480,7 +480,7 @@ describe.concurrent('destroy', () => {
       a.b = b
       b.c = c
       c.a = a
-      await expect(destroyAsync({
+      await expect(destroy({
         instances: [a, b, c],
         onCircularDependencyDetected,
       })).resolves.toBeUndefined()
@@ -539,7 +539,7 @@ describe.concurrent('destroy', () => {
       d.a = a
       d.b = b
       d.c = c
-      await expect(destroyAsync({
+      await expect(destroy({
         instances: [a, b, c, d],
         onCircularDependencyDetected,
       })).resolves.toBeUndefined()
@@ -596,7 +596,7 @@ describe.concurrent('destroy', () => {
         const f = new F()
         const g = new G()
         f.g = g
-        await expect(destroyAsync({
+        await expect(destroy({
           instances: [a, b, c, d, e, f, g],
           onCircularDependencyDetected,
         })).resolves.toBeUndefined()

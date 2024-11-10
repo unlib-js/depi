@@ -28,7 +28,7 @@ export default function DependsOn<T extends AnyConstructor>(
 ) {
   return (clazz: T) => {
     if (opts instanceof Array) {
-      appendToArray(MetaKey.DependsOn, opts, clazz)
+      appendToArray(MetaKey.DependsOnProps, opts, clazz)
       return
     }
     const { params } = opts
@@ -46,7 +46,7 @@ export default function DependsOn<T extends AnyConstructor>(
       enumerable: false,
       configurable: true,
     })
-    appendToArray(MetaKey.DependsOn, opts.props ?? [], newClazz)
+    appendToArray(MetaKey.DependsOnProps, opts.props ?? [], newClazz)
     /*
     SWC fucked up, adding `as T` fixes the error
 

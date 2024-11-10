@@ -3,7 +3,7 @@ import { setTimeout } from 'timers/promises'
 import { describe, expect, it, vi } from 'vitest'
 import { MetaKey } from './common'
 import DependsOn from './decorators/DependsOn'
-import { destroyAsync } from './destroy'
+import { destroy } from './destroy'
 import getDeps from './helpers/inversify/getDeps'
 import get from './helpers/metadata/get'
 
@@ -57,13 +57,13 @@ describe.concurrent('Integration with Inversify', () => {
     }
     container.bind(TeamService).toSelf().inSingletonScope()
 
-    expect(get(MetaKey.DependsOn, UserService))
+    expect(get(MetaKey.DependsOnProps, UserService))
       .toEqual(['remoteConfigService', 'databaseService'])
-    expect(get(MetaKey.DependsOn, TeamService))
+    expect(get(MetaKey.DependsOnProps, TeamService))
       .toEqual(['databaseService'])
-    expect(get(MetaKey.DependsOn, DatabaseService))
+    expect(get(MetaKey.DependsOnProps, DatabaseService))
       .toEqual(['remoteConfigService'])
-    expect(get(MetaKey.DependsOn, RemoteConfigService)).toBeUndefined()
+    expect(get(MetaKey.DependsOnProps, RemoteConfigService)).toBeUndefined()
 
     const [ userSerivce, teamService ] = await Promise.all([
       container.getAsync(UserService),
@@ -77,7 +77,7 @@ describe.concurrent('Integration with Inversify', () => {
     expect(databaseService.remoteConfigService).toBe(remoteConfigService)
 
     const onCircularDependencyDetected = vi.fn()
-    await expect(destroyAsync({
+    await expect(destroy({
       instances: [
         container.get(RemoteConfigService),
         container.get(DatabaseService),

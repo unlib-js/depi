@@ -39,7 +39,7 @@ export interface DestroyAllOptions {
  * @param opts - The options for destroying the instances.
  * @returns A promise that resolves when all instances have been destroyed.
  */
-export async function destroyAsync({
+export async function destroy({
   instances,
   onCircularDependencyDetected: onLoop,
 }: DestroyAllOptions) {

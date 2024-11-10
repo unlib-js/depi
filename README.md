@@ -13,7 +13,7 @@ A library for managing asynchronous disposal of objects with dependencies, with 
     - [Build](#build)
     - [Test](#test)
   - [API](#api)
-    - [`destroyAsync(options)`](#destroyasyncoptions)
+    - [`destroy(options)`](#destroyoptions)
     - [`@DependsOn(deps)`](#dependsondeps)
     - [`getDeps(clazz)`](#getdepsclazz)
   - [How it Works](#how-it-works)
@@ -50,7 +50,7 @@ npm install @unlib-js/depi --registry=https://npm.pkg.github.com
 
 ```TypeScript
 import { setTimeout } from 'node:timers/promises'
-import { destroyAsync } from '@unlib-js/depi'
+import { destroy } from '@unlib-js/depi'
 import DependsOn from '@unlib-js/depi/decorators/DependsOn'
 
 class DatabaseService implements AsyncDisposable {
@@ -71,7 +71,7 @@ class UserService implements AsyncDisposable {
 const userService = new UserService()
 // Now `userService` depends on its property `databaseService`
 
-await destroyAsync({
+await destroy({
   instances: [databaseSerivce, userService],
   onCircularDependencyDetected(stack, graph) {
     console.warn('Circular dependency detected:', stack)
@@ -88,7 +88,7 @@ await destroyAsync({
 ```TypeScript
 import { setTimeout } from 'node:timers/promises'
 import { Container, injectable, inject } from 'inversify'
-import { destroyAsync } from '@unlib-js/depi'
+import { destroy } from '@unlib-js/depi'
 import DependsOn from '@unlib-js/depi/decorators/DependsOn'
 import getDeps from '@unlib-js/depi/helpers/inversify/getDeps'
 
@@ -139,7 +139,7 @@ const userService = await container.getAsync(UserService)
 // ...
 
 // During application shutdown:
-await destroyAsync({
+await destroy({
   instances: [
     container.get(RemoteConfigService),
     container.get(DatabaseService),
@@ -174,7 +174,7 @@ pnpm test
 
 ## API
 
-### `destroyAsync(options)`
+### `destroy(options)`
 
 Main function to handle asynchronous disposal of objects.
 
