@@ -7,8 +7,8 @@ import { destroyAsync } from './destroy'
 import getDeps from './helpers/inversify/getDeps'
 import get from './helpers/metadata/get'
 
-describe('Integration with Inversify', () => {
-  it('should work', async () => {
+describe.concurrent('Integration with Inversify', () => {
+  it('should work', { repeats: 10 }, async () => {
     const logs: string[] = []
     async function dispose(this: NewableFunction) {
       const className = this.constructor.name
