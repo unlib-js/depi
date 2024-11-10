@@ -5,13 +5,40 @@ import getMetadata from './helpers/metadata/get'
 import type { Dependant } from './types'
 
 export interface DestroyAllOptions {
+  /**
+   * The instances to be destroyed.
+   */
   instances: unknown[]
+  /**
+   * An optional callback that is called when a circular dependency is
+   * detected.
+   *
+   * The callback receives the stack of instances involved in the circular
+   * dependency, and the full dependency graph.
+   *
+   * @param stack - The stack of instances involved in the circular dependency.
+   * @param graph - The full dependency graph.
+   */
   onCircularDependencyDetected?: (
     stack: unknown[],
     graph: DiGraph<unknown>,
   ) => void
 }
 
+/**
+ * Asynchronously destroys a set of instances. Dependencies are destroyed
+ * **after** their dependants.
+ *
+ * This function first constructs a dependant graph for the given instances.
+ * It then traverses the graph in post-order. When all child nodes (dependants)
+ * are destroyed, it then destroys the parent node (dependency).
+ *
+ * If there are any remaining instances that have not been destroyed, it
+ * assumes they have circular dependencies and destroys them anyway.
+ *
+ * @param opts - The options for destroying the instances.
+ * @returns A promise that resolves when all instances have been destroyed.
+ */
 export async function destroyAsync({
   instances,
   onCircularDependencyDetected: onLoop,
@@ -79,7 +106,7 @@ export function depsOf(inst: unknown) {
   if (!proto) return {}
   type PropKeys = (string | symbol)[]
   const propKeys = getMetadata<PropKeys>(
-    MetaKey.DependsOn,
+    MetaKey.DependsOnProps,
     proto.constructor,
   ) ?? []
   const props = propKeys
