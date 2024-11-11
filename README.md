@@ -37,6 +37,7 @@ Manually managing disposal order can be error-prone and difficult to maintain. W
 Related discussions:
 
 * https://github.com/inversify/InversifyJS/issues/1606
+* https://github.com/nestjs/nest/issues/4599#issuecomment-2257682983
 
 ## Installation
 
