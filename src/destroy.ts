@@ -143,7 +143,7 @@ export function dependantGraphOf(instances: unknown[]) {
     if (dependants.has(node)) return
     dependants.set(node, new Set())
   }
-  function addEdge(dst: unknown, src: unknown) {
+  function addEdge(src: unknown, dst: unknown) {
     const _dependants = dependants.get(src) ?? new Set()
     _dependants.add(dst)
     dependants.set(src, _dependants)
@@ -151,8 +151,8 @@ export function dependantGraphOf(instances: unknown[]) {
   for (const inst of instances) {
     addNode(inst)
     const { props, params } = depsOf(inst)
-    props?.forEach(dep => addEdge(inst, dep))
-    params?.forEach(dep => addEdge(inst, dep))
+    props?.forEach(dep => addEdge(dep, inst))
+    params?.forEach(dep => addEdge(dep, inst))
   }
   return new SimpleDiGraph(dependants)
 }
