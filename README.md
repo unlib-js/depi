@@ -9,6 +9,7 @@ A library for managing asynchronous disposal of objects with dependencies, with 
   - [Usage](#usage)
     - [Basic Usage](#basic-usage)
     - [With InversifyJS](#with-inversifyjs)
+    - [Run Examples](#run-examples)
   - [Development](#development)
     - [Build](#build)
     - [Test](#test)
@@ -157,7 +158,14 @@ await destroy({
 // Destroyed RemoteConfigService
 ```
 
-For more detailed examples, please refer to the tests, e.g., this [test](./src/integration.test.ts).
+### Run Examples
+
+```
+pnpm example basic
+pnpm example inversify
+```
+
+For more examples, please refer to the tests, e.g., this [test](./src/integration.test.ts).
 
 ## Development
 
