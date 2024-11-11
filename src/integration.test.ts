@@ -65,7 +65,7 @@ describe.concurrent('Integration with Inversify', () => {
       .toEqual(['remoteConfigService'])
     expect(get(MetaKey.DependsOnProps, RemoteConfigService)).toBeUndefined()
 
-    const [ userSerivce, teamService ] = await Promise.all([
+    const [userSerivce, teamService] = await Promise.all([
       container.getAsync(UserService),
       container.getAsync(TeamService),
     ])

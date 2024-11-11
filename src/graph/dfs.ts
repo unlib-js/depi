@@ -36,7 +36,7 @@ function _dfs<Node>({
   onLoop?: (stack: Node[], graph: DiGraph<Node>) => void
 }) {
   if (stack?.includes(root)) {
-    onLoop?.([ ...stack, root ], graph)
+    onLoop?.([...stack, root], graph)
     return
   }
   if (visited.has(root)) return

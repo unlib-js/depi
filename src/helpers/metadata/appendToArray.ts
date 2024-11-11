@@ -1,10 +1,10 @@
 import get from './get'
 
 export default function appendToArray(
-  metadataKey: any,
-  metadataValues: any[],
-  target: Object,
+  metadataKey: unknown,
+  metadataValues: unknown[],
+  target: object,
 ) {
-  const data = get<any[]>(metadataKey, target) ?? []
+  const data = get<unknown[]>(metadataKey, target) ?? []
   Reflect.defineMetadata(metadataKey, [...data, ...metadataValues], target)
 }

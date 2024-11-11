@@ -3,16 +3,21 @@ import { describe, expect, it } from 'vitest'
 import getDeps from './getDeps'
 
 describe('getDeps', () => {
-  it('should return empty dependencies for a class without dependencies', () => {
-    @injectable()
-    class Whatever {}
-    const { params, props } = getDeps(Whatever)
-    expect(params(Whatever)).toEqual([])
-    expect(props).toEqual([])
-  })
+  it(
+    'should return empty dependencies for ' +
+    'a class without dependencies',
+    () => {
+      @injectable()
+      class Whatever {}
+      const { params, props } = getDeps(Whatever)
+      expect(params(Whatever)).toEqual([])
+      expect(props).toEqual([])
+    },
+  )
 
   it(
-    'should return indexes of constructor parameters annotated by @inject',
+    'should return indexes of constructor parameters ' +
+    'annotated by @inject',
     () => {
       @injectable()
       class Whatever {

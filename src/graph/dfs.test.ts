@@ -83,7 +83,7 @@ describe.concurrent('dfs', () => {
     dfs(graph, 'A', visited, node => result.push(node), onLoop)
     expect(result).toEqual(['B', 'A'])
     expect(onLoop).toBeCalledTimes(1)
-    expect([ ...onLoop.mock.calls[0][0] ]).toEqual(['A', 'B', 'A'])
+    expect([...onLoop.mock.calls[0][0]]).toEqual(['A', 'B', 'A'])
   })
 
   it('should traverse a graph with loop(s) correctly', () => {
@@ -100,7 +100,7 @@ describe.concurrent('dfs', () => {
     dfs(graph, 'A', visited, node => result.push(node), onLoop)
     expect(result).toEqual(['C', 'B', 'A'])
     expect(onLoop).toBeCalledTimes(1)
-    expect([ ...onLoop.mock.calls[0][0] ]).toEqual(['A', 'B', 'C', 'A'])
+    expect([...onLoop.mock.calls[0][0]]).toEqual(['A', 'B', 'C', 'A'])
   })
 
   it('should traverse a graph with loop(s) correctly', () => {

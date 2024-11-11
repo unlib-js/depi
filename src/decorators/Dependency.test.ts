@@ -35,7 +35,7 @@ describe('Dependency', () => {
 
   it('should handle symbol properties', () => {
     const testSymbol = Symbol('test')
-    
+
     class TestClass {
       @Dependency()
       public [testSymbol] = 'sym-dep'

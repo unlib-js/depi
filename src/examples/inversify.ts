@@ -68,7 +68,7 @@ class UserService extends Service {
   @Dependency() // Explicitly declare this property as a dependency
   @inject(ServiceID.RemoteConfigService)
   private readonly remoteConfigService!: RemoteConfigService
-  @Dependency() // Explicitly declare this property as a dependency 
+  @Dependency() // Explicitly declare this property as a dependency
   @inject(ServiceID.DatabaseService)
   private readonly databaseService!: DatabaseService
 
@@ -120,7 +120,7 @@ container
   .to(TeamService)
   .inSingletonScope()
 
-const [ userSerivce, teamService ] = await Promise.all([
+const [userSerivce, teamService] = await Promise.all([
   container.getAsync(ServiceID.UserService),
   container.getAsync(ServiceID.TeamService),
 ])

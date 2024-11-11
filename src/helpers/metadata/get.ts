@@ -1,5 +1,5 @@
 export default function get<T>(
-  metadataKey: string,
+  metadataKey: unknown,
   target: unknown,
 ): T | undefined {
   if (!target) return

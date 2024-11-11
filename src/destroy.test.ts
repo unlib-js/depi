@@ -86,7 +86,7 @@ describe.concurrent('destroy', () => {
         checkOrder(UserService0.name, DatabaseService0.name)
         checkOrder(TeamService0.name, DatabaseService0.name)
         checkOrder(DatabaseService0.name, RemoteConfigService0.name)
-      }
+      },
     }
   }
 
@@ -152,7 +152,7 @@ describe.concurrent('destroy', () => {
         checkOrder(UserService1.name, CacheService1.name)
         checkOrder(DatabaseService1.name, RemoteConfigService1.name)
         checkOrder(CacheService1.name, RemoteConfigService1.name)
-      }
+      },
     }
   }
 
@@ -193,34 +193,38 @@ describe.concurrent('destroy', () => {
       expect(params).toEqual(['foo', 'baz'])
     })
 
-    it('should retrieve both property and parameter dependencies correctly', () => {
-      @DependsOn({
-        params: [0, 2],
-        props: ['prop0', 'prop2']
+    it(
+      'should retrieve both property and ' +
+      'parameter dependencies correctly',
+      () => {
+        @DependsOn({
+          params: [0, 2],
+          props: ['prop0', 'prop2'],
+        })
+        class A {
+          public prop0 = 'prop-val-0'
+          public prop1 = 'prop-val-1'
+          public prop2 = 'prop-val-2'
+          public prop3 = 'prop-val-3'
+          public constructor(
+            public param0: string,
+            public param1: string,
+            public param2: string,
+            public param3: string,
+          ) {}
+        }
+        const aObj = new A(
+          'param-val-0',
+          'param-val-1',
+          'param-val-2',
+          'param-val-3',
+        )
+        const { params = [], props = [] } = depsOf(aObj)
+        expect(params).toEqual(['param-val-0', 'param-val-2'])
+        expect(props).toEqual(['prop-val-0', 'prop-val-2'])
       })
-      class A {
-        public prop0 = 'prop-val-0'
-        public prop1 = 'prop-val-1'
-        public prop2 = 'prop-val-2'
-        public prop3 = 'prop-val-3'
-        public constructor(
-          public param0: string,
-          public param1: string,
-          public param2: string,
-          public param3: string,
-        ) {}
-      }
-      const aObj = new A(
-        'param-val-0',
-        'param-val-1',
-        'param-val-2',
-        'param-val-3',
-      )
-      const { params = [], props = [] } = depsOf(aObj)
-      expect(params).toEqual(['param-val-0', 'param-val-2'])
-      expect(props).toEqual(['prop-val-0', 'prop-val-2'])
-    })
-  })
+  },
+  )
 
   describe.concurrent('dependantGraphOf', () => {
     it('should return an empty graph for an empty array', () => {
@@ -424,7 +428,7 @@ describe.concurrent('destroy', () => {
     })
 
     function toNames(instances: unknown[]) {
-      return instances.map(inst => (inst as any).constructor.name)
+      return instances.map(inst => (inst as object).constructor.name)
     }
 
     it('should destroy instances with circular dependency', async () => {

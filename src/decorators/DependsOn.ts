@@ -36,7 +36,8 @@ export default function DependsOn<T extends AnyConstructor>(
     }
     const { params, props = [] } = opts
     const newClazz = class extends clazz implements Dependant {
-      public [symbols.ctorDeps]?: any[]
+      public [symbols.ctorDeps]?: unknown[]
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       public constructor(...args: any[]) {
         super(...args)
         const _params = typeof params === 'function'
@@ -57,7 +58,8 @@ export default function DependsOn<T extends AnyConstructor>(
     /*
     SWC fucked up, adding `as T` fixes the error
 
-    error TS4058: Return type of exported function has or is using name 'symDeps' from external module "src/common" but cannot be named.
+    error TS4058: Return type of exported function has or is using name
+    'symCtorDeps' from external module "src/common" but cannot be named.
     */
     return newClazz as T
   }

@@ -4,7 +4,7 @@ export default class DiGraph<Node> {
       nodes(): Iterable<Node>
       childrenOf(node: Node): Set<Node>
       entries?: (this: DiGraph<Node>) => Iterable<readonly [Node, Set<Node>]>
-    }
+    },
   ) {}
 
   public nodes() { return this.opts.nodes() }
