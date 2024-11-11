@@ -1,0 +1,31 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    environment:
+      name: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          # https://github.com/pnpm/pnpm/issues/3141
+          registry-url: https://npm.pkg.github.com/
+      - uses: pnpm/action-setup@v4
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        with:
+          run_install: |
+            - recursive: false
+      # Make sure it builds (`pnpm test` does not depends on `pnpm build`)
+      - run: pnpm build
+      - run: pnpm test
