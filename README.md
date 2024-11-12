@@ -132,6 +132,7 @@ class RemoteConfigService implements AsyncDisposable {
   }
 }
 
+@DependsOn(getDeps(DatabaseService))
 @injectable()
 class DatabaseService implements AsyncDisposable {
   public constructor(
