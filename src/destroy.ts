@@ -16,8 +16,12 @@ export interface DestroyAllOptions {
    * The callback receives the stack of instances involved in the circular
    * dependency, and the full dependency graph.
    *
+   * NOTE: This callback is called during the traverse-and-destroy process.
+   * Therefore, it could be called multiple times when the destruction of some
+   * instances may have already been started.
+   *
    * @param stack - The stack of instances involved in the circular dependency.
-   * @param graph - The full dependency graph.
+   * @param graph - The full dependant graph.
    */
   onCircularDependencyDetected?: (
     stack: unknown[],
