@@ -6,6 +6,11 @@ A library for managing asynchronous disposal of objects with dependencies, with 
   - [Features](#features)
   - [Motivation](#motivation)
   - [Installation](#installation)
+    - [Setup GitHub Packages Registry](#setup-github-packages-registry)
+    - [Add Depi to Your Project](#add-depi-to-your-project)
+      - [pNpm](#pnpm)
+      - [Yarn](#yarn)
+      - [npm](#npm)
   - [Usage](#usage)
     - [Basic Usage](#basic-usage)
     - [With InversifyJS](#with-inversifyjs)
@@ -42,8 +47,34 @@ Related discussions:
 
 ## Installation
 
+### Setup GitHub Packages Registry
+
+Firstly follow the [GitHub Packages Registry documentation](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-to-github-packages) to set up authentication to the GitHub Package Registry.
+
+Then, add the following line to your [`.npmrc`](https://docs.npmjs.com/cli/v9/configuring-npm/npmrc?v=true) file under your project root:
+
 ```
-npm install @unlib-js/depi --registry=https://npm.pkg.github.com
+@unlib-js:registry=https://npm.pkg.github.com
+```
+
+### Add Depi to Your Project
+
+#### pNpm
+
+```
+pnpm add @unlib-js/depi
+```
+
+#### Yarn
+
+```
+yarn add @unlib-js/depi
+```
+
+#### npm
+
+```
+npm install @unlib-js/depi
 ```
 
 ## Usage
