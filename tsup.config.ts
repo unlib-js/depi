@@ -1,13 +1,8 @@
 import { defineConfig } from 'tsup'
+import entry from './scripts/build/entry'
 
 export default defineConfig({
-  entry: [
-    'src/index.ts',
-    'src/graph/DiGraph.ts',
-    'src/decorators/DependsOn.ts',
-    'src/decorators/Dependency.ts',
-    'src/helpers/inversify/getDeps.ts',
-  ],
+  entry,
   format: ['esm', 'cjs'],
   dts: true,
   sourcemap: true,
