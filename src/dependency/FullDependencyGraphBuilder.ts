@@ -4,11 +4,32 @@ import DependencyGraphBuilder, {
 } from './DependencyGraphBuilder'
 import type { UnlistedInstanceContext } from './types'
 
+/**
+ * A function that is called when an encountered instance is not in the initial
+ * set of instances provided to the `fromInstances` method.
+ *
+ * This callback allows the caller to decide whether to include the unlisted
+ * instance in the dependency graph or not.
+ *
+ * @param unlistedInst - The unlisted instance that was encountered.
+ * @param ctx - Additional context about the unlisted instance, including the
+ * current object that depends on `unlistedInst`, the property or constructor
+ * parameter that referenced the unlisted instance, and the set of instances
+ * that have already been added to the graph.
+ * @returns `true` if the unlisted instance should be included in the
+ * dependency graph, `false` otherwise.
+ */
 export type OnUnlistedInstance<T = unknown> =
   (unlistedInst: T, ctx: UnlistedInstanceContext<T>) => boolean
 
 export interface FullDependencyGraphBuilderOptions<T = unknown>
   extends DependencyGraphBuilderOptions<T> {
+  /**
+   * An optional callback that is called when an encountered instance is not in
+   * the initial set of instances provided to the `fromInstances` method.
+   *
+   * @see OnUnlistedInstance
+   */
   onUnlistedInstance?: OnUnlistedInstance<T>
 }
 

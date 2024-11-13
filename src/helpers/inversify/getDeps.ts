@@ -3,6 +3,23 @@ import { METADATA_KEY, MetadataReader } from 'inversify'
 
 const { INJECT_TAG } = METADATA_KEY
 
+/**
+ * Retrieves the dependencies (properties and constructor parameters) of a
+ * given class decorated with InversifyJS's `@inject` decorator.
+ *
+ * This function uses the `MetadataReader` from the `inversify` library to
+ * extract the metadata associated with the class.
+ *
+ * The returned object contains two properties:
+ * - `props`: an array of property keys that have the `@inject()` decorator
+ *   applied.
+ * - `params`: a function that returns an array of constructor parameter
+ *   indexes that have the `@inject()` decorator applied.
+ *
+ * @param clazz - The class for which to retrieve the dependencies.
+ * @returns An object containing the property and parameter dependencies of
+ * the class.
+ */
 export default function getDeps<T extends AnyConstructor>(clazz: T) {
   const reader = new MetadataReader()
   const propMeta = reader.getPropertiesMetadata(clazz)

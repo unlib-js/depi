@@ -26,6 +26,11 @@ export interface DestroyAllOptions<T = unknown> {
     stack: T[],
     graph: DiGraph<T>,
   ) => void
+  /**
+   * An optional dependency graph builder function or instance that can be used
+   * to construct the dependency graph for the instances being destroyed. If
+   * not provided, a default `FullDependencyGraphBuilder` will be used.
+   */
   dependencyGraphOf?:
     | DependencyGraphBuilder<T>
     | ((instances: Set<T>) => DiGraph<T>)
