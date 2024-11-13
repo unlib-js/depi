@@ -2,7 +2,7 @@ import 'reflect-metadata'
 
 import Dependency from '@/decorators/Dependency'
 import DependsOn from '@/decorators/DependsOn'
-import { destroy } from '@/destroy'
+import destroy from '@/destroy'
 import getDeps from '@/helpers/inversify/getDeps'
 import { Container, inject, injectable, postConstruct } from 'inversify'
 import { setTimeout } from 'node:timers/promises'

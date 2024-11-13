@@ -2,7 +2,7 @@ import 'reflect-metadata'
 
 import Dependency from '@/decorators/Dependency'
 import DependsOn from '@/decorators/DependsOn'
-import { destroy } from '@/destroy'
+import destroy from '@/destroy'
 import { setTimeout } from 'timers/promises'
 
 class Service implements AsyncDisposable {
