@@ -1,0 +1,26 @@
+{
+  "$schema": "https://typedoc-plugin-markdown.org/schema.json",
+  "entryPoints": [
+    "src/index.ts",
+    "src/graph/DiGraph.ts",
+    "src/decorators/DependsOn.ts",
+    "src/decorators/Dependency.ts",
+    "src/helpers/inversify/getDeps.ts",
+    "src/dependency/types.ts",
+    "src/dependency/depsOf.ts",
+    "src/dependency/DependencyGraphBuilder.ts",
+    "src/dependency/FullDependencyGraphBuilder.ts"
+  ],
+  "plugin": [
+    "typedoc-plugin-markdown"
+  ],
+  "readme": "none",
+  "mergeReadme": true,
+  "enumMembersFormat": "table",
+  "parametersFormat": "table",
+  "propertiesFormat": "table",
+  "typeDeclarationFormat": "table",
+  "indexFormat": "table",
+  "outputFileStrategy": "modules",
+  "gitRevision": "main"
+}
