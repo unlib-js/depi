@@ -17,11 +17,9 @@ A library for managing asynchronous disposal of objects with dependencies, with 
     - [Run Examples](#run-examples)
   - [Development](#development)
     - [Build](#build)
+    - [Build Docs](#build-docs)
     - [Test](#test)
   - [API](#api)
-    - [`destroy(options)`](#destroyoptions)
-    - [`@DependsOn(deps)`](#dependsondeps)
-    - [`getDeps(clazz)`](#getdepsclazz)
   - [How it Works](#how-it-works)
   - [Cicular Dependency Behavior](#cicular-dependency-behavior)
   - [License](#license)
@@ -85,8 +83,19 @@ npm install @unlib-js/depi
 import { setTimeout } from 'node:timers/promises'
 import { destroy } from '@unlib-js/depi'
 import DependsOn from '@unlib-js/depi/decorators/DependsOn'
+import Dependency from '@unlib-js/depi/decorators/Dependency'
+
+class RemoteConfigService implements AsyncDisposable {
+  public async [Symbol.asyncDispose]() {
+    console.log('Destroyed DatabaseService')
+  }
+}
+const remoteConfigService = new RemoteConfigService()
 
 class DatabaseService implements AsyncDisposable {
+  @Dependency()
+  private readonly remoteConfigService = remoteConfigService
+
   public async [Symbol.asyncDispose]() {
     console.log('Destroyed DatabaseService')
   }
@@ -114,6 +123,7 @@ await destroy({
 // Output:
 // Destroyed UserService
 // Destroyed DatabaseService
+// Destroyed RemoteConfigService
 ```
 
 ### With InversifyJS
@@ -207,6 +217,12 @@ For more examples, please refer to the tests, e.g., this [test](./src/integratio
 pnpm i && pnpm build
 ```
 
+### Build Docs
+
+```
+pnpm typedoc
+```
+
 ### Test
 
 ```
@@ -215,21 +231,7 @@ pnpm test
 
 ## API
 
-### `destroy(options)`
-
-Main function to handle asynchronous disposal of objects.
-
-Options:
-* `instances`: Array of objects to dispose.
-* `onCircularDependencyDetected`: Optional callback when circular dependencies are found during disposal.
-
-### `@DependsOn(deps)`
-
-Decorator to explicitly declare dependencies for a class.
-
-### `getDeps(clazz)`
-
-Helper function to extract InversifyJS dependencies from a class that is already annotated with `@inject(...)`.
+See [here](./docs/README.md).
 
 ## How it Works
 
