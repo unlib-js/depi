@@ -30,6 +30,26 @@
       "types": "./dist/helpers/inversify/getDeps.d.ts",
       "import": "./dist/helpers/inversify/getDeps.js",
       "require": "./dist/helpers/inversify/getDeps.cjs"
+    },
+    "./dependency/types": {
+      "types": "./dist/dependency/types.d.ts",
+      "import": "./dist/dependency/types.js",
+      "require": "./dist/dependency/types.cjs"
+    },
+    "./dependency/depsOf": {
+      "types": "./dist/dependency/depsOf.d.ts",
+      "import": "./dist/dependency/depsOf.js",
+      "require": "./dist/dependency/depsOf.cjs"
+    },
+    "./dependency/DependencyGraphBuilder": {
+      "types": "./dist/dependency/DependencyGraphBuilder.d.ts",
+      "import": "./dist/dependency/DependencyGraphBuilder.js",
+      "require": "./dist/dependency/DependencyGraphBuilder.cjs"
+    },
+    "./dependency/FullDependencyGraphBuilder": {
+      "types": "./dist/dependency/FullDependencyGraphBuilder.d.ts",
+      "import": "./dist/dependency/FullDependencyGraphBuilder.js",
+      "require": "./dist/dependency/FullDependencyGraphBuilder.cjs"
     }
   },
   "files": [
@@ -38,6 +58,7 @@
   "scripts": {
     "lint": "eslint",
     "lint-fix": "eslint --fix",
+    "gen-exports": "tsx ./scripts/build/gen-exports.ts",
     "build": "eslint && tsup",
     "test": "vitest",
     "prepublish": "eslint && tsup",
