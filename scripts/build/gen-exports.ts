@@ -24,7 +24,7 @@ async function main() {
       types: modPath('index.d.ts'),
       import: modPath('index.js'),
       require: modPath('index.cjs'),
-    }
+    },
   }
   for (const mod of mods) {
     pkgJson.exports[`./${mod}`] = {
