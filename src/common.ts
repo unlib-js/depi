@@ -2,8 +2,10 @@ export const enum MetaKey {
   DependsOnProps = 'depends-on-props',
 }
 
-const symCtorDeps: unique symbol = Symbol.for('ctorDeps')
+export interface Symbols {
+  readonly ctorDeps: unique symbol
+}
 
 export const symbols = {
-  ctorDeps: symCtorDeps,
-} as const
+  ctorDeps: Symbol.for('ctorDeps'),
+} as Symbols
