@@ -1,7 +1,7 @@
 import { setTimeout } from 'timers/promises'
 import { describe, expect, it, vi } from 'vitest'
 import DependsOn from './decorators/DependsOn'
-import { dependantGraphOf, depsOf, destroy } from './destroy'
+import destroy from './destroy'
 import DiGraph from './graph/DiGraph'
 
 describe.concurrent('destroy', () => {
@@ -64,10 +64,12 @@ describe.concurrent('destroy', () => {
     const teamService = new TeamService0()
 
     return {
-      remoteConfigService,
-      databaseService,
-      userService,
-      teamService,
+      instances: [
+        remoteConfigService,
+        databaseService,
+        userService,
+        teamService,
+      ],
       checkEdges(graph: DiGraph<unknown>) {
         expect(graph.childrenOf(remoteConfigService)).toEqual(new Set([
           databaseService,
@@ -130,10 +132,12 @@ describe.concurrent('destroy', () => {
     const userService = new UserService1()
 
     return {
-      remoteConfigService,
-      databaseService,
-      cacheService,
-      userService,
+      instances: [
+        remoteConfigService,
+        databaseService,
+        cacheService,
+        userService,
+      ],
       checkEdges(graph: DiGraph<unknown>) {
         expect(graph.childrenOf(remoteConfigService)).toEqual(new Set([
           databaseService,
@@ -156,172 +160,15 @@ describe.concurrent('destroy', () => {
     }
   }
 
-  describe.concurrent('depsOf', () => {
-    it('should return empty for a class with no dependencies', () => {
-      class A {}
-      const { params = [], props = [] } = depsOf(new A())
-      expect(params?.length).toBeFalsy()
-      expect(props?.length).toBeFalsy()
-    })
+  describe.concurrent('destroy', () => {
+    function nameOf(inst: unknown) {
+      return (inst as object).constructor.name
+    }
 
-    it('should retrieve property dependencies correctly', () => {
-      @DependsOn(['foo', 'baz'])
-      class A {
-        public foo = 'foo'
-        public bar = 'bar'
-        public baz = 'baz'
-      }
-      const aObj = new A()
-      const { props = [] } = depsOf(aObj)
-      expect(props).toEqual(['foo', 'baz'])
-    })
+    function namesOf(instances: unknown[]) {
+      return instances.map(nameOf)
+    }
 
-    it('should retrieve parameter dependencies correctly', () => {
-      @DependsOn({
-        params: [0, 2],
-      })
-      class A {
-        public constructor(
-          public foo: string,
-          public bar: string,
-          public baz: string,
-          public qux: string,
-        ) {}
-      }
-      const aObj = new A('foo', 'bar', 'baz', 'qux')
-      const { params = [] } = depsOf(aObj)
-      expect(params).toEqual(['foo', 'baz'])
-    })
-
-    it(
-      'should retrieve both property and ' +
-      'parameter dependencies correctly',
-      () => {
-        @DependsOn({
-          params: [0, 2],
-          props: ['prop0', 'prop2'],
-        })
-        class A {
-          public prop0 = 'prop-val-0'
-          public prop1 = 'prop-val-1'
-          public prop2 = 'prop-val-2'
-          public prop3 = 'prop-val-3'
-          public constructor(
-            public param0: string,
-            public param1: string,
-            public param2: string,
-            public param3: string,
-          ) {}
-        }
-        const aObj = new A(
-          'param-val-0',
-          'param-val-1',
-          'param-val-2',
-          'param-val-3',
-        )
-        const { params = [], props = [] } = depsOf(aObj)
-        expect(params).toEqual(['param-val-0', 'param-val-2'])
-        expect(props).toEqual(['prop-val-0', 'prop-val-2'])
-      })
-  },
-  )
-
-  describe.concurrent('dependantGraphOf', () => {
-    it('should return an empty graph for an empty array', () => {
-      const graph = dependantGraphOf([])
-      expect([...graph.nodes()]).toEqual([])
-      expect([...graph.entries()]).toEqual([])
-    })
-
-    it('should return a graph with a single node for a single instance', () => {
-      class A {}
-      const aObj = new A()
-      const graph = dependantGraphOf([aObj])
-      expect([...graph.nodes()]).toEqual([aObj])
-      expect([...graph.entries()]).toEqual([[aObj, new Set()]])
-    })
-
-    it(
-      'should return a graph with isolated nodes for independent instances',
-      () => {
-        class A {}
-        class B {}
-        const aObj = new A()
-        const bObj = new B()
-        const graph = dependantGraphOf([aObj, bObj])
-        expect([...graph.nodes()]).toEqual([aObj, bObj])
-        expect([...graph.entries()]).toEqual([
-          [aObj, new Set()],
-          [bObj, new Set()],
-        ])
-      },
-    )
-
-    it('should return a correct graph', () => {
-      const {
-        remoteConfigService,
-        databaseService,
-        userService,
-        teamService,
-        checkEdges,
-      } = case0()
-
-      const graph = dependantGraphOf([
-        remoteConfigService,
-        databaseService,
-        userService,
-        teamService,
-      ])
-      expect(new Set(graph.nodes())).toEqual(new Set([
-        remoteConfigService,
-        databaseService,
-        userService,
-        teamService,
-      ]))
-      checkEdges(graph)
-    })
-
-    it('should return a correct graph', () => {
-      const {
-        remoteConfigService,
-        databaseService,
-        cacheService,
-        userService,
-        checkEdges,
-      } = case1()
-
-      const graph = dependantGraphOf([
-        remoteConfigService,
-        databaseService,
-        cacheService,
-        userService,
-      ])
-      expect(new Set([...graph.nodes()])).toEqual(new Set([
-        remoteConfigService,
-        databaseService,
-        cacheService,
-        userService,
-      ]))
-      checkEdges(graph)
-    })
-
-    it('should return a correct graph', () => {
-      const group0 = case0()
-      const group1 = case1()
-      const graph = dependantGraphOf([
-        ...Object.values(group0),
-        ...Object.values(group1),
-      ])
-      expect(new Set(graph.nodes())).toEqual(new Set([
-        ...Object.values(group0),
-        ...Object.values(group1),
-      ]))
-      group0.checkEdges(graph)
-      group1.checkEdges(graph)
-    })
-  })
-
-  describe.concurrent('destroyAllAsync', () => {
     it('should work when no instances are passed', async () => {
       const onCircularDependencyDetected = vi.fn()
       await expect(destroy({
@@ -359,20 +206,12 @@ describe.concurrent('destroy', () => {
       repeats: 10,
     }, async () => {
       const {
-        remoteConfigService,
-        databaseService,
-        userService,
-        teamService,
+        instances,
         checkDispose,
       } = case0()
       const onCircularDependencyDetected = vi.fn()
       await expect(destroy({
-        instances: [
-          remoteConfigService,
-          databaseService,
-          userService,
-          teamService,
-        ],
+        instances,
         onCircularDependencyDetected,
       })).resolves.toBeUndefined()
       expect(onCircularDependencyDetected).not.toBeCalled()
@@ -383,20 +222,12 @@ describe.concurrent('destroy', () => {
       repeats: 10,
     }, async () => {
       const {
-        remoteConfigService,
-        databaseService,
-        cacheService,
-        userService,
+        instances,
         checkDispose,
       } = case1()
       const onCircularDependencyDetected = vi.fn()
       await expect(destroy({
-        instances: [
-          remoteConfigService,
-          databaseService,
-          cacheService,
-          userService,
-        ],
+        instances,
         onCircularDependencyDetected,
       })).resolves.toBeUndefined()
       expect(onCircularDependencyDetected).not.toBeCalled()
@@ -411,14 +242,8 @@ describe.concurrent('destroy', () => {
       const onCircularDependencyDetected = vi.fn()
       await expect(destroy({
         instances: [
-          group0.remoteConfigService,
-          group0.databaseService,
-          group0.userService,
-          group0.teamService,
-          group1.remoteConfigService,
-          group1.databaseService,
-          group1.cacheService,
-          group1.userService,
+          ...group0.instances,
+          ...group1.instances,
         ],
         onCircularDependencyDetected,
       })).resolves.toBeUndefined()
@@ -426,10 +251,6 @@ describe.concurrent('destroy', () => {
       group0.checkDispose()
       group1.checkDispose()
     })
-
-    function toNames(instances: unknown[]) {
-      return instances.map(inst => (inst as object).constructor.name)
-    }
 
     it('should destroy instances with circular dependency', async () => {
       // A <--> B
@@ -456,7 +277,7 @@ describe.concurrent('destroy', () => {
       expect(dispose).toBeCalledTimes(2)
       expect(onCircularDependencyDetected).toHaveBeenCalledOnce()
       const [stack] = onCircularDependencyDetected.mock.calls[0]
-      expect(toNames(stack)).toEqual(toNames([a, b, a]))
+      expect(namesOf(stack)).toEqual(namesOf([a, b, a]))
     })
 
     it('should destroy instances with circular dependency', async () => {
@@ -492,7 +313,7 @@ describe.concurrent('destroy', () => {
       expect(onCircularDependencyDetected).toHaveBeenCalledOnce()
       const [stack] = onCircularDependencyDetected.mock.calls[0]
       // Dependant graph: A -> C -> B -> A
-      expect(toNames(stack)).toEqual(toNames([a, c, b, a]))
+      expect(namesOf(stack)).toEqual(namesOf([a, c, b, a]))
     })
 
     it('should destroy instances with circular dependency', async () => {
@@ -554,9 +375,19 @@ describe.concurrent('destroy', () => {
     it(
       'should destroy all instances even on presence of circular dependency',
       async () => {
-        // A -> B -> C -> A; C -> D
+        /*
+        A -> B -> C -> D
+        ^         |
+        |         |
+         \________/
+
+        E; F -> G
+        */
         const onCircularDependencyDetected = vi.fn()
-        const dispose = vi.fn(() => Promise.resolve())
+        const _dispose = vi.fn((_: string) => Promise.resolve())
+        function dispose(this: object) {
+          return _dispose(this.constructor.name)
+        }
         @DependsOn(['b'])
         class A {
           public b?: B
@@ -604,7 +435,7 @@ describe.concurrent('destroy', () => {
           instances: [a, b, c, d, e, f, g],
           onCircularDependencyDetected,
         })).resolves.toBeUndefined()
-        expect(dispose).toBeCalledTimes(7)
+        expect(_dispose).toBeCalledTimes(7)
         expect(onCircularDependencyDetected).toHaveBeenCalled()
       },
     )

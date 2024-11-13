@@ -3,7 +3,7 @@ import { setTimeout } from 'timers/promises'
 import { describe, expect, it, vi } from 'vitest'
 import { MetaKey } from './common'
 import DependsOn from './decorators/DependsOn'
-import { destroy } from './destroy'
+import destroy from './destroy'
 import getDeps from './helpers/inversify/getDeps'
 import get from './helpers/metadata/get'
 

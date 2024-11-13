@@ -1,14 +1,13 @@
-import { MetaKey, symbols } from './common'
+import type DependencyGraphBuilder from './dependency/DependencyGraphBuilder'
+import FullDependencyGraphBuilder from './dependency/FullDependencyGraphBuilder'
 import dfs from './graph/dfs'
 import DiGraph, { SimpleDiGraph } from './graph/DiGraph'
-import getMetadata from './helpers/metadata/get'
-import type { Dependant } from './types'
 
-export interface DestroyAllOptions {
+export interface DestroyAllOptions<T = unknown> {
   /**
    * The instances to be destroyed.
    */
-  instances: unknown[]
+  instances: T[] | Set<T>
   /**
    * An optional callback that is called when a circular dependency is
    * detected.
@@ -24,9 +23,12 @@ export interface DestroyAllOptions {
    * @param graph - The full dependant graph.
    */
   onCircularDependencyDetected?: (
-    stack: unknown[],
-    graph: DiGraph<unknown>,
+    stack: T[],
+    graph: DiGraph<T>,
   ) => void
+  dependencyGraphOf?:
+    | DependencyGraphBuilder<T>
+    | ((instances: Set<T>) => DiGraph<T>)
 }
 
 /**
@@ -43,17 +45,21 @@ export interface DestroyAllOptions {
  * @param opts - The options for destroying the instances.
  * @returns A promise that resolves when all instances have been destroyed.
  */
-export async function destroy({
+export default async function destroy<T = unknown>({
   instances,
   onCircularDependencyDetected: onLoop,
-}: DestroyAllOptions) {
-  // A -> B: A is the dependency of B
-  const dependantGraph = dependantGraphOf(instances)
+  dependencyGraphOf = new FullDependencyGraphBuilder<T>(),
+}: DestroyAllOptions<T>) {
+  instances = new Set(instances)
   // B -> A: B depends on A
-  const dependencyGraph = dependencyGraphOf(instances)
+  const dependencyGraph = typeof dependencyGraphOf === 'function'
+    ? dependencyGraphOf(instances)
+    : dependencyGraphOf.fromInstances(instances)
+  // A -> B: A is the dependency of B
+  const dependantGraph = SimpleDiGraph.fromReversed(dependencyGraph)
   let minDeps = Infinity
   // The nodes with the least dependencies (ideally, 0)
-  let minDepsNodes: unknown[] = []
+  let minDepsNodes: T[] = []
   for (const [node, children] of dependencyGraph.entries()) {
     if (children.size < minDeps) {
       minDeps = children.size
@@ -63,9 +69,9 @@ export async function destroy({
     }
   }
   // Instance -> the disposal promise of the instance
-  const tasks = new Map<unknown, Promise<void>>()
-  const visited = new Set<unknown>()
-  async function destroy(inst: unknown) {
+  const tasks = new Map<T, Promise<void>>()
+  const visited = new Set<T>()
+  async function destroy(inst: T) {
     await waitForDependantsToBeDestroyed(
       dependantGraph,
       inst,
@@ -101,70 +107,10 @@ export async function destroy({
   await Promise.all(tasks.values())
 }
 
-/**
- * @internal
- */
-export function depsOf(inst: unknown) {
-  if (!inst) return {}
-  const proto = Reflect.getPrototypeOf(inst)
-  if (!proto) return {}
-  type PropKeys = (string | symbol)[]
-  const propKeys = getMetadata<PropKeys>(
-    MetaKey.DependsOnProps,
-    proto.constructor,
-  ) ?? []
-  const props = propKeys
-    .map(prop => Reflect.get(inst, prop, inst) as unknown)
-    .filter(Boolean) // Skip falsy prop values
-  const params = (inst as Partial<Dependant>)[symbols.ctorDeps] ?? []
-  return { props, params }
-}
-
-/**
- * @internal
- */
-export function dependencyGraphOf(instances: unknown[]) {
-  const cache = new Map<unknown, Set<unknown>>()
-  return new DiGraph<unknown>({
-    nodes: () => instances.values(),
-    childrenOf(node) {
-      const cached = cache.get(node)
-      if (cached) return cached
-      const { props = [], params = [] } = depsOf(node)
-      const deps = new Set([...props, ...params])
-      cache.set(node, deps)
-      return deps
-    },
-  })
-}
-
-/**
- * @internal
- */
-export function dependantGraphOf(instances: unknown[]) {
-  const dependants = new Map<unknown, Set<unknown>>()
-  function addNode(node: unknown) {
-    if (dependants.has(node)) return
-    dependants.set(node, new Set())
-  }
-  function addEdge(src: unknown, dst: unknown) {
-    const _dependants = dependants.get(src) ?? new Set()
-    _dependants.add(dst)
-    dependants.set(src, _dependants)
-  }
-  for (const inst of instances) {
-    addNode(inst)
-    const { props, params } = depsOf(inst)
-    props?.forEach(dep => addEdge(dep, inst))
-    params?.forEach(dep => addEdge(dep, inst))
-  }
-  return new SimpleDiGraph(dependants)
-}
-
-async function waitForDependantsToBeDestroyed(
-  dependantGraph: DiGraph<unknown>,
-  node: unknown,
-  destructionTasks: Map<unknown, Promise<void>>,
+async function waitForDependantsToBeDestroyed<T = unknown>(
+  dependantGraph: DiGraph<T>,
+  node: T,
+  destructionTasks: Map<T, Promise<void>>,
 ) {
   const dependants = [...dependantGraph.childrenOf(node)]
   await Promise.all(dependants.map(async dependant =>

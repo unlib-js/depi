@@ -2,6 +2,7 @@ import { MetaKey, symbols } from '@/common'
 import { Dependant } from '@/types'
 import { describe, expect, it } from 'vitest'
 import DependsOn from './DependsOn'
+import { mkParamDep } from '@/dependency/testUtils'
 
 describe('DependsOn', () => {
   it('should add metadata to the class correctly', () => {
@@ -72,6 +73,7 @@ describe('DependsOn', () => {
       }
     }
     const aObj = new A('foo', 'bar', 'baz', 'qux') as unknown as Dependant
-    expect(aObj[symbols.ctorDeps]).toEqual(['foo', 'baz'])
+    expect(aObj[symbols.ctorDeps])
+      .toEqual([mkParamDep(0, 'foo'), mkParamDep(2, 'baz')])
   })
 })

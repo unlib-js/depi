@@ -1,4 +1,5 @@
 import { MetaKey, symbols } from '@/common'
+import type { RuntimeCtorParamDependency } from '@/dependency/types'
 import appendToArray from '@/helpers/metadata/appendToArray'
 import type { AnyConstructor, Dependant } from '@/types'
 
@@ -36,7 +37,7 @@ export default function DependsOn<T extends AnyConstructor>(
     }
     const { params, props = [] } = opts
     const newClazz = class extends clazz implements Dependant {
-      public [symbols.ctorDeps]?: unknown[]
+      public [symbols.ctorDeps]?: RuntimeCtorParamDependency[]
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       public constructor(...args: any[]) {
         super(...args)
@@ -44,8 +45,17 @@ export default function DependsOn<T extends AnyConstructor>(
           ? params(newClazz)
           : params
         if (!_params?.length) return
-        const deps = this[symbols.ctorDeps] ??= []
-        deps.push(..._params.map(index => args[index]))
+        const deps = this[symbols.ctorDeps] ?? []
+        deps.push(..._params.map(index => ({
+          value: args[index],
+          param: index,
+        } satisfies RuntimeCtorParamDependency)))
+        Reflect.defineProperty(this, symbols.ctorDeps, {
+          value: deps,
+          configurable: true,
+          enumerable: false,
+          writable: true,
+        })
       }
     }
     Reflect.defineProperty(newClazz, 'name', {
