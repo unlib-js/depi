@@ -89,3 +89,41 @@
 #### Defined in
 
 [common.ts:9](https://github.com/unlib-js/depi/blob/main/src/common.ts#L9)
+
+## Functions
+
+### default()
+
+> **default**\<`T`\>(`opts`): `Promise`\<`void`\>
+
+Asynchronously destroys a set of instances. Dependencies are destroyed
+**after** their dependants.
+
+This function first constructs a dependant graph for the given instances.
+It then traverses the graph in post-order. When all child nodes (dependants)
+are destroyed, it then destroys the parent node (dependency).
+
+If there are any remaining instances that have not been destroyed, it
+assumes they have circular dependencies and destroys them anyway.
+
+#### Type Parameters
+
+| Type Parameter | Default type |
+| ------ | ------ |
+| `T` | `unknown` |
+
+#### Parameters
+
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `opts` | [`DestroyAllOptions`](index.md#destroyalloptionst)\<`T`\> | The options for destroying the instances. |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+A promise that resolves when all instances have been destroyed.
+
+#### Defined in
+
+[destroy.ts:53](https://github.com/unlib-js/depi/blob/main/src/destroy.ts#L53)
