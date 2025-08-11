@@ -1,4 +1,4 @@
-import { Container, inject, injectable } from 'inversify'
+import { Container, inject, injectable, multiInject } from 'inversify'
 import { setTimeout } from 'timers/promises'
 import { describe, expect, it, vi } from 'vitest'
 import { MetaKey } from './common'
@@ -39,6 +39,14 @@ describe.concurrent('Integration with Inversify', () => {
     }
     container.bind(DatabaseService).toSelf().inSingletonScope()
 
+    class Gadget extends Service {}
+    @injectable()
+    class Gadget0 extends Gadget {}
+    @injectable()
+    class Gadget1 extends Gadget {}
+    container.bind(Gadget).to(Gadget0).inSingletonScope()
+    container.bind(Gadget).to(Gadget1).inSingletonScope()
+
     @DependsOn(getDeps(UserService))
     @injectable()
     class UserService extends Service {
@@ -46,6 +54,13 @@ describe.concurrent('Integration with Inversify', () => {
       public remoteConfigService?: RemoteConfigService
       @inject(DatabaseService)
       public databaseService?: DatabaseService
+
+      public constructor(
+        @multiInject(Gadget)
+        public gadgets: Gadget[],
+      ) {
+        super()
+      }
     }
     container.bind(UserService).toSelf().inSingletonScope()
 
@@ -73,21 +88,27 @@ describe.concurrent('Integration with Inversify', () => {
     const databaseService = container.get(DatabaseService)
     expect(userSerivce.remoteConfigService).toBe(remoteConfigService)
     expect(userSerivce.databaseService).toBe(databaseService)
+    expect(userSerivce.gadgets[0]).toBeInstanceOf(Gadget0)
+    expect(userSerivce.gadgets[1]).toBeInstanceOf(Gadget1)
     expect(teamService.databaseService).toBe(databaseService)
     expect(databaseService.remoteConfigService).toBe(remoteConfigService)
 
     const onCircularDependencyDetected = vi.fn()
-    await expect(destroy({
-      instances: [
-        container.get(RemoteConfigService),
-        container.get(DatabaseService),
-        container.get(UserService),
-        container.get(TeamService),
-      ],
-      onCircularDependencyDetected,
-    })).resolves.toBeUndefined()
+    await expect(
+      destroy({
+        instances: [
+          ...container.getAll(Gadget),
+          container.get(RemoteConfigService),
+          container.get(DatabaseService),
+          container.get(UserService),
+          container.get(TeamService),
+        ],
+        onCircularDependencyDetected,
+      })).resolves.toBeUndefined()
     console.debug(logs)
     expect(onCircularDependencyDetected).not.toHaveBeenCalled()
+    checkOrder(UserService.name, Gadget0.name)
+    checkOrder(UserService.name, Gadget1.name)
     checkOrder(UserService.name, RemoteConfigService.name)
     checkOrder(UserService.name, DatabaseService.name)
     checkOrder(TeamService.name, DatabaseService.name)
