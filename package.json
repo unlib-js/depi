@@ -74,7 +74,9 @@
     "@types/node": "^22.9.1",
     "eslint": "^9.15.0",
     "globals": "^15.12.0",
-    "inversify": "^6.1.4",
+    "inversify": "^7.7.0",
+    "inversify-6": "npm:inversify@6",
+    "inversify-7": "npm:inversify@7",
     "reflect-metadata": "^0.2.2",
     "tsup": "^8.3.5",
     "tsx": "^4.19.2",
@@ -88,5 +90,17 @@
   "packageManager": "pnpm@9.12.3",
   "repository": {
     "url": "https://github.com/unlib-js/depi.git"
+  },
+  "peerDependencies": {
+    "inversify-6": "npm:inversify@6",
+    "inversify-7": "npm:inversify@7"
+  },
+  "peerDependenciesMeta": {
+    "inversify-6": {
+      "optional": true
+    },
+    "inversify-7": {
+      "optional": true
+    }
   }
 }
