@@ -1,5 +1,9 @@
 export interface RuntimeDependency<T = unknown> {
   value: T
+  /**
+   * If the original value is an array, the index of `value` in the array
+   */
+  index?: number
 }
 
 export interface RuntimePropDependency<T = unknown>

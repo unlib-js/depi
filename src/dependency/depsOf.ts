@@ -1,7 +1,10 @@
 import { MetaKey, symbols } from '@/common'
 import getMetadata from '@/helpers/metadata/get'
-import { Dependant } from '@/types'
-import { RuntimePropDependency } from './types'
+import type { Dependant } from '@/types'
+import type {
+  RuntimeCtorParamDependency,
+  RuntimePropDependency,
+} from './types'
 
 /**
  * Retrieves the dependencies of the given instance.
@@ -25,11 +28,37 @@ export default function depsOf<T = unknown>(inst: T) {
     proto.constructor,
   ) ?? []
   const props = propKeys
-    .map(prop => ({
-      value: Reflect.get(inst, prop, inst) as T,
-      prop,
-    } satisfies RuntimePropDependency<T>))
+    .flatMap<RuntimePropDependency<T>>(prop => {
+      const value = Reflect.get(inst, prop, inst) as T
+      if (shouldFlat<T>(value)) {
+        return value.map<RuntimePropDependency<T>>((item, index) => ({
+          value: item,
+          prop,
+          index,
+        }))
+      }
+      return [{ value, prop }]
+    })
     .filter(dep => dep.value) // Skip falsy prop values
-  const params = (inst as Partial<Dependant<T>>)[symbols.ctorDeps] ?? []
+  const params = ((inst as Partial<Dependant<T>>)[symbols.ctorDeps] ?? [])
+    .flatMap<RuntimeCtorParamDependency<T>>(dep => {
+      const { value, param } = dep
+      if (shouldFlat<T>(value)) {
+        return value.map<RuntimeCtorParamDependency<T>>((item, index) => ({
+          value: item,
+          param,
+          index,
+        }))
+      }
+      return [dep]
+    })
+    .filter(dep => dep.value) // Skip falsy values
   return { props, params }
+}
+
+function shouldFlat<T>(value: unknown): value is T[] {
+  return typeof value === 'object' && !!value
+    && !(Symbol.asyncDispose in value)
+    && !(Symbol.dispose in value)
+    && Array.isArray(value)
 }
