@@ -1,6 +1,7 @@
 import { MetaKey, symbols } from '@/common'
 import type { RuntimeCtorParamDependency } from '@/dependency/types'
 import appendToArray from '@/helpers/metadata/appendToArray'
+import copy from '@/helpers/metadata/copy'
 import type { AnyConstructor, Dependant } from '@/types'
 
 export type DependsOnOptions<T extends AnyConstructor> =
@@ -65,6 +66,8 @@ export default function DependsOn<T extends AnyConstructor>(
       configurable: true,
     })
     appendToArray(MetaKey.DependsOnProps, props, newClazz)
+    Reflect.getOwnMetadataKeys(clazz)
+      .forEach(key => copy(key, newClazz, clazz))
     /*
     SWC fucked up, adding `as T` fixes the error
 
