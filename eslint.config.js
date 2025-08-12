@@ -1,6 +1,5 @@
 import pluginJs from '@eslint/js'
-import stylisticJs from '@stylistic/eslint-plugin-js'
-import globals from 'globals'
+import stylistic from '@stylistic/eslint-plugin'
 import tseslint from 'typescript-eslint'
 
 
@@ -10,7 +9,6 @@ import tseslint from 'typescript-eslint'
 export default [
   { ignores: ['dist/**/*'] },
   { files: ['**/*.{js,mjs,cjs,ts}'] },
-  { languageOptions: { globals: globals.browser } },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
   {
@@ -26,16 +24,16 @@ export default [
   },
   {
     plugins: {
-      '@stylistic/js': stylisticJs,
+      '@stylistic': stylistic,
     },
     rules: {
-      '@stylistic/js/indent': ['error', 2],
-      '@stylistic/js/eol-last': ['error', 'always'],
-      '@stylistic/js/array-bracket-spacing': ['error', 'never'],
-      '@stylistic/js/object-curly-spacing': ['error', 'always'],
-      '@stylistic/js/no-trailing-spaces': ['error'],
-      '@stylistic/js/comma-dangle': ['error', 'always-multiline'],
-      '@stylistic/js/max-len': ['warn', {
+      '@stylistic/indent': ['error', 2],
+      '@stylistic/eol-last': ['error', 'always'],
+      '@stylistic/array-bracket-spacing': ['error', 'never'],
+      '@stylistic/object-curly-spacing': ['error', 'always'],
+      '@stylistic/no-trailing-spaces': ['error'],
+      '@stylistic/comma-dangle': ['error', 'always-multiline'],
+      '@stylistic/max-len': ['warn', {
         code: 80,
         tabWidth: 2,
         ignoreUrls: true,
@@ -47,11 +45,12 @@ export default [
   },
   {
     rules: {
-      semi: ['error', 'never'],
-      quotes: ['error', 'single'],
+      '@stylistic/semi': ['error', 'never'],
+      '@stylistic/quotes': ['error', 'single'],
+      // Keep curly as legacy rule since it's not available in @stylistic
       curly: ['error', 'multi-line', 'consistent'],
-      'keyword-spacing': ['error', { before: true, after: true }],
-      'spaced-comment': ['error', 'always'],
+      '@stylistic/keyword-spacing': ['error', { before: true, after: true }],
+      '@stylistic/spaced-comment': ['error', 'always'],
     },
   },
 ]
