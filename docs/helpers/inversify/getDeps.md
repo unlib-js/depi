@@ -45,9 +45,9 @@ the class.
 
 | Name | Type | Default value | Defined in |
 | ------ | ------ | ------ | ------ |
-| `params` | \<`T`\>(`clazz`) => `number`[] | paramDepsOf | [helpers/inversify/getDeps.ts:32](https://github.com/unlib-js/depi/blob/main/src/helpers/inversify/getDeps.ts#L32) |
-| `props` | keyof `InstanceType`\<`T`\>[] | - | [helpers/inversify/getDeps.ts:31](https://github.com/unlib-js/depi/blob/main/src/helpers/inversify/getDeps.ts#L31) |
+| `params` | \<`T`\>(`clazz`) => `number`[] | paramDepsOf | [helpers/inversify/getDeps.ts:28](https://github.com/unlib-js/depi/blob/main/src/helpers/inversify/getDeps.ts#L28) |
+| `props` | (`string` \| `symbol`)[] | - | [helpers/inversify/getDeps.ts:27](https://github.com/unlib-js/depi/blob/main/src/helpers/inversify/getDeps.ts#L27) |
 
 #### Defined in
 
-[helpers/inversify/getDeps.ts:23](https://github.com/unlib-js/depi/blob/main/src/helpers/inversify/getDeps.ts#L23)
+[helpers/inversify/getDeps.ts:21](https://github.com/unlib-js/depi/blob/main/src/helpers/inversify/getDeps.ts#L21)

@@ -20,7 +20,7 @@
 
 #### Defined in
 
-[decorators/DependsOn.ts:6](https://github.com/unlib-js/depi/blob/main/src/decorators/DependsOn.ts#L6)
+[decorators/DependsOn.ts:7](https://github.com/unlib-js/depi/blob/main/src/decorators/DependsOn.ts#L7)
 
 ## Functions
 
@@ -70,4 +70,4 @@ A decorator function that can be applied to a class.
 
 #### Defined in
 
-[decorators/DependsOn.ts:30](https://github.com/unlib-js/depi/blob/main/src/decorators/DependsOn.ts#L30)
+[decorators/DependsOn.ts:31](https://github.com/unlib-js/depi/blob/main/src/decorators/DependsOn.ts#L31)

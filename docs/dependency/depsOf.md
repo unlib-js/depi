@@ -40,4 +40,4 @@ constructor dependencies.
 
 #### Defined in
 
-[dependency/depsOf.ts:18](https://github.com/unlib-js/depi/blob/main/src/dependency/depsOf.ts#L18)
+[dependency/depsOf.ts:21](https://github.com/unlib-js/depi/blob/main/src/dependency/depsOf.ts#L21)
