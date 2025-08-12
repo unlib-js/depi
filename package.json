@@ -102,5 +102,8 @@
     "inversify-7": {
       "optional": true
     }
+  },
+  "dependencies": {
+    "@changesets/cli": "^2.29.5"
   }
 }
